@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   getNextPracticeWord,
@@ -13,6 +13,7 @@ export function PracticeSessionPage() {
   const [currentWord, setCurrentWord] = useState<GetNextPracticeWordResponse | null>(null);
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState<SubmitAttemptResponse | null>(null);
+  const answerInputRef = useRef<HTMLInputElement | null>(null);
 
   const [loadingWord, setLoadingWord] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -41,8 +42,21 @@ export function PracticeSessionPage() {
     loadNextWord();
   }, [sessionId]);
 
-  async function handleSubmit() {
-    if (!sessionId || !currentWord || !answer.trim()) return;
+  useEffect(() => {
+    if (currentWord && !loadingWord) {
+      answerInputRef.current?.focus();
+    }
+  }, [currentWord, loadingWord]);
+
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (feedback) {
+      await loadNextWord();
+      return;
+    }
+
+    if (!sessionId || !currentWord || !answer.trim() || submitting || feedback != null) return;
 
     setSubmitting(true);
     setError(null);
@@ -98,57 +112,59 @@ export function PracticeSessionPage() {
             <p style={{ margin: 0, color: "var(--muted-text)" }}>Traduce:</p>
             <h2 style={{ margin: "8px 0 0" }}>{currentWord.prompt}</h2>
           </div>
-
-          <div style={{ display: "grid", gap: 12 }}>
-            <input
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Escribe tu respuesta"
-              style={{
-                padding: 12,
-                borderRadius: 10,
-                border: "1px solid var(--border)",
-                background: "var(--card)",
-                color: "var(--text)",
-              }}
-            />
-
-            {!feedback && (
-              <button
-                className="button buttonPrimary"
-                onClick={handleSubmit}
-                disabled={submitting || !answer.trim()}
-              >
-                {submitting ? "Comprobando..." : "Responder"}
-              </button>
-            )}
-
-            {feedback && (
-              <div
+          <form onSubmit={handleSubmit}>
+            <div style={{ display: "grid", gap: 12 }}>
+              <input
+                ref={answerInputRef}
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Escribe tu respuesta"
                 style={{
                   padding: 12,
                   borderRadius: 10,
                   border: "1px solid var(--border)",
                   background: "var(--card)",
+                  color: "var(--text)",
                 }}
-              >
-                <p style={{ margin: 0 }}>
-                  {feedback.isCorrect ? "✅ Correcto" : "❌ Incorrecto"}
-                </p>
-                <p style={{ margin: "8px 0 0", color: "var(--muted-text)" }}>
-                  Respuesta correcta: <strong>{feedback.correctAnswer}</strong>
-                </p>
+              />
 
+              {!feedback && (
                 <button
                   className="button buttonPrimary"
-                  style={{ marginTop: 12 }}
-                  onClick={loadNextWord}
+                  type="submit"
+                  disabled={submitting || !answer.trim()}
                 >
-                  Siguiente
+                  {submitting ? "Comprobando..." : "Responder"}
                 </button>
-              </div>
-            )}
-          </div>
+              )}
+              {feedback && (
+                <div
+                  style={{
+                    padding: 12,
+                    borderRadius: 10,
+                    border: "1px solid var(--border)",
+                    background: "var(--card)",
+                  }}
+                >
+                  <p style={{ margin: 0 }}>
+                    {feedback.isCorrect ? "✅ Correcto" : "❌ Incorrecto"}
+                  </p>
+                  <p style={{ margin: "8px 0 0", color: "var(--muted-text)" }}>
+                    Respuesta correcta: <strong>{feedback.correctAnswer}</strong>
+                  </p>
+
+                  <button
+                    type="submit"
+                    className="button buttonPrimary"
+                    style={{ marginTop: 12 }}
+                    onClick={loadNextWord}
+                  >
+                    Siguiente
+                  </button>
+                </div>
+              )}
+            </div>
+          </form>
         </>
       )}
     </div>
