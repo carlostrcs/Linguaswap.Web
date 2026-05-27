@@ -87,9 +87,6 @@ export function PublicLibrariesPage() {
       {error && (
         <p style={{ color: "var(--danger)" }}>
           Error: {error}
-          <br />
-          Tip: abre{" "}
-          <code>https://localhost:7019/api/libraries/public</code> en el navegador y comprueba que responde.
         </p>
       )}
 
