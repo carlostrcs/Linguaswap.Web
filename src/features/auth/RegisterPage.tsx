@@ -1,7 +1,7 @@
 import type React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../api/authApi";
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ export function RegisterPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>){ 
+    async function handleSubmit(e: SubmitEvent<HTMLFormElement>){ 
         e.preventDefault();
 
         setError(null);

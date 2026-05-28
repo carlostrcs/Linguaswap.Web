@@ -1,26 +1,56 @@
-import { useEffect, useState } from "react";
-import { getMyLibraries, type LibraryListItem } from "../../api/libraries";
+import { use, useEffect, useRef, useState, type SubmitEvent } from "react";
+import { createLibrary, getMyLibraries, type LibraryListItem } from "../../api/libraries";
 
 export function MyLibrariesPage() {
     const [libraries, setLibraries] = useState<LibraryListItem[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [createError, setCreateError] = useState<string | null>(null);
+    const [isCreating, setIsCreating] = useState(false);
+    const [libraryName, setLibraryName] = useState("");
+    const [isSaving, setIsSaving] = useState(false);
+    const libraryNameInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(()=>{
-        getMyLibraries().then(
-            (response)=>{
-                setLibraries(response);
-            }
-        ).catch(
-            (e)=>{
-                setError(e instanceof Error ? e.message : String(e));
-            }
-        ).finally(
-            ()=>{
-                setLoading(false);
-            }
-        )
-    }, [])
+        loadLibraries();
+    }, []);
+
+    useEffect(()=>{
+        if(isCreating){
+            libraryNameInputRef.current?.focus();
+        }
+    }, [isCreating]);
+
+    async function loadLibraries() {
+        setLoading(true);
+        setError(null);
+
+        try {
+            const response = await getMyLibraries();
+            setLibraries(response);
+        } catch (e) {
+            setError(e instanceof Error ? e.message : String(e));
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleCreateLibrary(e: SubmitEvent<HTMLFormElement>) {
+        e.preventDefault();
+        const name = libraryName.trim();
+        if(!name){ return };
+        setCreateError(null);
+        setIsSaving(true);
+        try{
+            await createLibrary(name);
+            await loadLibraries();
+            setLibraryName("");
+        }catch(e){
+            setCreateError(e instanceof Error ? e.message : String(e));
+        }finally{
+            setIsSaving(false);
+        }
+    }
 
     return (
         <div className="card">
@@ -32,17 +62,18 @@ export function MyLibrariesPage() {
 
             {loading && <p>Cargando...</p>}
 
-            {libraries && libraries.length === 0 && (
+            {!loading && !error && libraries && libraries.length === 0 && (
                 <p style={{ color: "var(--muted-text)" }}>
                 No hay bibliotecas propias.
                 </p>
             )}
-
-            <ul>
-                {libraries?.map((library)=>{
-                   return <li key={library.id}>{library.name}</li>
-                })}
-            </ul>
+            {libraries && libraries.length > 0 && (
+                <ul>
+                    {libraries.map((library)=>{
+                    return <li key={library.id}>{library.name}</li>
+                    })}
+                </ul>
+            )}
             <div>
                 {error && (
                     <p style={{ color: "var(--danger)" }}>
@@ -50,6 +81,53 @@ export function MyLibrariesPage() {
                     </p>
                 )}
             </div>
+
+            {!isCreating && (
+                <button type="button" onClick={()=>{setIsCreating(true)}} className="button buttonPrimary">Crear</button>
+            )}
+            
+            {isCreating && (
+                <form onSubmit={handleCreateLibrary}>
+                    <input type="text"
+                        ref={libraryNameInputRef}
+                        value={libraryName}
+                        disabled = {isSaving}
+                        placeholder="Nombre de librería"
+                        onChange={(e)=>{
+                            setLibraryName(e.target.value);
+                        }}
+                        style={{
+                            padding: 12,
+                            borderRadius: 10,
+                            border: "1px solid var(--border)",
+                            background: "var(--card)",
+                            color: "var(--text)",
+                        }}
+                    />
+                    <button type="submit" className="button buttonPrimary" 
+                        disabled={isSaving || !libraryName.trim()}>
+                            {isSaving ? "Guardando..." : "Guardar"}
+                    </button>
+                    <button type="button" 
+                        onClick={()=>{
+                            setIsCreating(false);
+                            setLibraryName("");
+                            setCreateError(null);
+                        }} 
+                        className="button buttonPrimary"
+                        disabled = {isSaving}>
+                            Cancelar
+                    </button>
+                    <div>
+                        {createError && (
+                            <p style={{ color: "var(--danger)" }}>
+                            Error: {createError}
+                            </p>
+                        )}
+                    </div>
+                </form>
+            )}
+            
 
         </div>
     );

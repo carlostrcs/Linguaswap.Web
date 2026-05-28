@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
 import { login } from "../../api/authApi";
 import { setToken } from "../../auth/auth";
 import { Link, useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ export function LoginPage() {
     const [error, setError] = useState<string | null>(null);
 
 
-    async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>){
+    async function handleSubmit(e: SubmitEvent<HTMLFormElement>){
         e.preventDefault();
 
         setError(null);
