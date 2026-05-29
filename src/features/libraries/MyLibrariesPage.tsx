@@ -1,5 +1,9 @@
-import { use, useEffect, useRef, useState, type SubmitEvent } from "react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import { createLibrary, getMyLibraries, type LibraryListItem } from "../../api/libraries";
+import { Card } from "../../components/Card";
+import { TextInput } from "../../components/TextInput";
+import { Button } from "../../components/Button";
+import { ErrorMessage } from "../../components/ErrorMessage";
 
 export function MyLibrariesPage() {
     const [libraries, setLibraries] = useState<LibraryListItem[] | null>(null);
@@ -53,7 +57,7 @@ export function MyLibrariesPage() {
     }
 
     return (
-        <div className="card">
+        <Card>
             <div className="spread" style={{ marginBottom: 12 }}>
                 <div>
                     <h3 style={{ margin: 0 }}>Mis bibliotecas</h3>
@@ -76,59 +80,50 @@ export function MyLibrariesPage() {
             )}
             <div>
                 {error && (
-                    <p style={{ color: "var(--danger)" }}>
-                    Error: {error}
-                    </p>
+                    <ErrorMessage message={error}>
+                    </ErrorMessage>
                 )}
             </div>
 
             {!isCreating && (
-                <button type="button" onClick={()=>{setIsCreating(true)}} className="button buttonPrimary">Crear</button>
+                <Button type="button" onClick={()=>{setIsCreating(true)}} variant="primary">Crear</Button>
             )}
             
             {isCreating && (
                 <form onSubmit={handleCreateLibrary}>
-                    <input type="text"
+                    <TextInput type="text"
                         ref={libraryNameInputRef}
                         value={libraryName}
                         disabled = {isSaving}
                         placeholder="Nombre de librería"
-                        onChange={(e)=>{
-                            setLibraryName(e.target.value);
-                        }}
-                        style={{
-                            padding: 12,
-                            borderRadius: 10,
-                            border: "1px solid var(--border)",
-                            background: "var(--card)",
-                            color: "var(--text)",
+                        onValueChange={(value)=>{
+                            setLibraryName(value);
                         }}
                     />
-                    <button type="submit" className="button buttonPrimary" 
+                    <Button type="submit" variant="primary" 
                         disabled={isSaving || !libraryName.trim()}>
                             {isSaving ? "Guardando..." : "Guardar"}
-                    </button>
-                    <button type="button" 
+                    </Button>
+                    <Button type="button" 
                         onClick={()=>{
                             setIsCreating(false);
                             setLibraryName("");
                             setCreateError(null);
                         }} 
-                        className="button buttonPrimary"
+                        variant="primary"
                         disabled = {isSaving}>
                             Cancelar
-                    </button>
+                    </Button>
                     <div>
                         {createError && (
-                            <p style={{ color: "var(--danger)" }}>
-                            Error: {createError}
-                            </p>
+                            <ErrorMessage message={createError}>
+                            </ErrorMessage>
                         )}
                     </div>
                 </form>
             )}
             
 
-        </div>
+        </Card>
     );
 }

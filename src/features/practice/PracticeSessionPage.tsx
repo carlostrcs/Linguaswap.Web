@@ -6,6 +6,10 @@ import {
   type GetNextPracticeWordResponse,
   type SubmitAttemptResponse,
 } from "../../api/practice";
+import { Card } from "../../components/Card";
+import { ErrorMessage } from "../../components/ErrorMessage";
+import { TextInput } from "../../components/TextInput";
+import { Button } from "../../components/Button";
 
 export function PracticeSessionPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -76,7 +80,7 @@ export function PracticeSessionPage() {
   }
 
   return (
-    <div className="card">
+    <Card>
       <div className="spread" style={{ marginBottom: 16 }}>
         <div>
           <h3 style={{ margin: 0 }}>Práctica</h3>
@@ -93,9 +97,8 @@ export function PracticeSessionPage() {
       {loadingWord && <p>Cargando palabra...</p>}
 
       {error && (
-        <p style={{ color: "var(--danger)" }}>
-          Error: {error}
-        </p>
+        <ErrorMessage message={error}>
+        </ErrorMessage>
       )}
 
       {!loadingWord && currentWord && (
@@ -114,28 +117,21 @@ export function PracticeSessionPage() {
           </div>
           <form onSubmit={handleSubmit}>
             <div style={{ display: "grid", gap: 12 }}>
-              <input
+              <TextInput
                 ref={answerInputRef}
                 value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
+                onValueChange={(value) => setAnswer(value)}
                 placeholder="Escribe tu respuesta"
-                style={{
-                  padding: 12,
-                  borderRadius: 10,
-                  border: "1px solid var(--border)",
-                  background: "var(--card)",
-                  color: "var(--text)",
-                }}
               />
 
               {!feedback && (
-                <button
-                  className="button buttonPrimary"
+                <Button
+                  variant="primary"
                   type="submit"
                   disabled={submitting || !answer.trim()}
                 >
                   {submitting ? "Comprobando..." : "Responder"}
-                </button>
+                </Button>
               )}
               {feedback && (
                 <div
@@ -153,20 +149,20 @@ export function PracticeSessionPage() {
                     Respuesta correcta: <strong>{feedback.correctAnswer}</strong>
                   </p>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="button buttonPrimary"
+                    variant="primary"
                     style={{ marginTop: 12 }}
                     onClick={loadNextWord}
                   >
                     Siguiente
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
           </form>
         </>
       )}
-    </div>
+    </Card>
   );
 }

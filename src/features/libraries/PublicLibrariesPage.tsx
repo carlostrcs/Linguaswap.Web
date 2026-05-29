@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiGet, apiPost } from "../../api/http";
+import { Card } from "../../components/Card";
+import { Button } from "../../components/Button";
+import { ErrorMessage } from "../../components/ErrorMessage";
 
 type PublicLibrariesResponse = {
   items: { id: string; name: string }[];
@@ -64,7 +67,7 @@ export function PublicLibrariesPage() {
   }
 
   return (
-    <div className="card">
+    <Card>
       <div className="spread" style={{ marginBottom: 12 }}>
         <div>
           <h3 style={{ margin: 0 }}>Bibliotecas públicas</h3>
@@ -73,21 +76,20 @@ export function PublicLibrariesPage() {
           </p>
         </div>
 
-        <button
-          className="button buttonPrimary"
+        <Button
+          variant="primary"
           disabled={!canStart}
           onClick={startDemoPractice}
         >
           {starting ? "Iniciando..." : "Practicar demo"}
-        </button>
+        </Button>
       </div>
 
       {loading && <p>Cargando...</p>}
 
       {error && (
-        <p style={{ color: "var(--danger)" }}>
-          Error: {error}
-        </p>
+        <ErrorMessage message={error}>
+        </ErrorMessage>
       )}
 
       {data && data.items.length === 0 && (
@@ -122,6 +124,6 @@ export function PublicLibrariesPage() {
           ))}
         </ul>
       )}
-    </div>
+    </Card>
   );
 }

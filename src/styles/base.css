@@ -2,8 +2,9 @@
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100%;
+html,
+body {
+  min-height: 100%;
 }
 
 body {
@@ -12,10 +13,30 @@ body {
   color: var(--text);
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   line-height: 1.4;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
 
 a {
   color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 .container {
@@ -45,13 +66,36 @@ a {
   align-items: center;
 }
 
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+.formGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.formGroup {
+  display: grid;
+  gap: 6px;
+}
+
 .button {
   border: 1px solid var(--border);
   background: var(--card);
   color: var(--text);
   padding: 10px 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--primary);
 }
 
 .buttonPrimary {
@@ -60,7 +104,54 @@ a {
   color: var(--primary-text);
 }
 
+.buttonPrimary:hover:not(:disabled) {
+  background: var(--primary-hover);
+  text-decoration: none;
+}
+
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+}
+
+.input:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.errorText {
+  color: var(--danger);
+  margin: 0;
+}
+
+.mutedText {
+  color: var(--muted-text);
+}
+
+.emptyState {
+  color: var(--muted-text);
+  margin: 12px 0;
+}
+
+.list {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.listItem {
+  margin-bottom: 8px;
 }

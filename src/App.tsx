@@ -5,7 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./app/router";
 
 
-function TopBar() {
+export function TopBar() {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -30,7 +30,7 @@ function TopBar() {
   );
 }
 
-function AppInner() {
+export function AppInner() {
   return (
     <div className="container">
       <TopBar />

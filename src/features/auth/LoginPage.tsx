@@ -2,6 +2,10 @@ import { useState, type SubmitEvent } from "react";
 import { login } from "../../api/authApi";
 import { setToken } from "../../auth/auth";
 import { Link, useNavigate } from "react-router-dom";
+import { TextInput } from "../../components/TextInput";
+import { Card } from "../../components/Card";
+import { Button } from "../../components/Button";
+import { ErrorMessage } from "../../components/ErrorMessage";
 
 export function LoginPage() {
     const navigate = useNavigate();
@@ -31,61 +35,46 @@ export function LoginPage() {
     }
 
     return (
-    <div className="card">
+    <Card>
       <h2 style={{ marginTop: 0 }}>Iniciar sesión</h2>
 
       <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
         <div style={{ display: "grid", gap: 6 }}>
           <label htmlFor="email">Email</label>
-          <input
+          <TextInput 
+            value={email} 
             id="email"
+            onValueChange={(value)=>{setEmail(value)}}
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="tu@email.com"
-            style={{
-              padding: 12,
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--text)",
-            }}
-          />
+            placeholder="tu@email.com">
+          </TextInput>
         </div>
 
         <div style={{ display: "grid", gap: 6 }}>
           <label htmlFor="password">Contraseña</label>
-          <input
+          <TextInput 
+            value={password} 
             id="password"
+            onValueChange={(value) => setPassword(value)}
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="********"
-            style={{
-              padding: 12,
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--text)",
-            }}
-          />
+            placeholder="********">
+          </TextInput>
         </div>
 
         {error && (
-          <p style={{ color: "var(--danger)", margin: 0 }}>
-            {error}
-          </p>
+          <ErrorMessage message={error}>
+          </ErrorMessage>
         )}
 
-        <button
+        <Button
           type="submit"
-          className="button buttonPrimary"
+          variant="primary"
           disabled={loading || !email.trim() || !password.trim()}
         >
           {loading ? "Entrando..." : "Entrar"}
-        </button>
+        </Button>
       </form>
       <p style={{marginTop: 16}}>¿No tienes cuenta? <Link to="/register">Regístrate</Link></p>
-    </div>
+    </Card>
   );
 }

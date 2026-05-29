@@ -1,7 +1,10 @@
-import type React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../../api/authApi";
 import { useState, type SubmitEvent } from "react";
+import { Card } from "../../components/Card";
+import { TextInput } from "../../components/TextInput";
+import { ErrorMessage } from "../../components/ErrorMessage";
+import { Button } from "../../components/Button";
 
 export function RegisterPage() {
     const navigate = useNavigate();
@@ -29,62 +32,47 @@ export function RegisterPage() {
     }
 
     return(
-    <div className="card">
+    <Card>
       <h2 style={{ marginTop: 0 }}>Regístrate</h2>
 
       <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
         <div style={{ display: "grid", gap: 6 }}>
           <label htmlFor="email">Email</label>
-          <input
+          <TextInput
             id="email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onValueChange={(value) => setEmail(value)}
             placeholder="tu@email.com"
-            style={{
-              padding: 12,
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--text)",
-            }}
           />
         </div>
 
         <div style={{ display: "grid", gap: 6 }}>
           <label htmlFor="password">Contraseña</label>
-          <input
+          <TextInput
             id="password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onValueChange={(value) => setPassword(value)}
             placeholder="********"
-            style={{
-              padding: 12,
-              borderRadius: 10,
-              border: "1px solid var(--border)",
-              background: "var(--card)",
-              color: "var(--text)",
-            }}
           />
         </div>
 
         {error && (
-          <p style={{ color: "var(--danger)", margin: 0 }}>
-            {error}
-          </p>
+                  <ErrorMessage message={error}>
+                  </ErrorMessage>
         )}
 
-        <button
+        <Button
           type="submit"
-          className="button buttonPrimary"
+          variant="primary"
           disabled={loading || !email.trim() || !password.trim()}
         >
           {loading ? "Registrando..." : "Registrarse"}
-        </button>
+        </Button>
       </form>
       <p style={{marginTop: 16}}>¿Ya tienes cuenta? <Link to="/login">Inicia sesión.</Link></p>
-    </div>
+    </Card>
     );
 
 }
