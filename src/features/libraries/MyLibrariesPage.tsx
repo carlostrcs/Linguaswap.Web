@@ -4,8 +4,10 @@ import { Card } from "../../components/Card";
 import { TextInput } from "../../components/TextInput";
 import { Button } from "../../components/Button";
 import { ErrorMessage } from "../../components/ErrorMessage";
+import { Link, useNavigate } from "react-router-dom";
 
 export function MyLibrariesPage() {
+    const navigate = useNavigate();
     const [libraries, setLibraries] = useState<LibraryListItem[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -62,6 +64,9 @@ export function MyLibrariesPage() {
                 <div>
                     <h3 style={{ margin: 0 }}>Mis bibliotecas</h3>
                 </div>
+                <Button type="button" onClick={() => navigate(-1)}>
+                    Volver
+                </Button>
             </div>
 
             {loading && <p>Cargando...</p>}
@@ -74,15 +79,16 @@ export function MyLibrariesPage() {
             {libraries && libraries.length > 0 && (
                 <ul>
                     {libraries.map((library)=>{
-                    return <li key={library.id}>{library.name}</li>
+                        return (
+                            <li key={library.id}>
+                                <Link to={`/libraries/${library.id}`}>{library.name}</Link>
+                            </li>
+                        )
                     })}
                 </ul>
             )}
             <div>
-                {error && (
-                    <ErrorMessage message={error}>
-                    </ErrorMessage>
-                )}
+                <ErrorMessage message={error} />
             </div>
 
             {!isCreating && (
@@ -115,10 +121,7 @@ export function MyLibrariesPage() {
                             Cancelar
                     </Button>
                     <div>
-                        {createError && (
-                            <ErrorMessage message={createError}>
-                            </ErrorMessage>
-                        )}
+                        <ErrorMessage message={createError} />
                     </div>
                 </form>
             )}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiGet, apiPost } from "../../api/http";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
@@ -83,14 +83,14 @@ export function PublicLibrariesPage() {
         >
           {starting ? "Iniciando..." : "Practicar demo"}
         </Button>
+		<Button type="button" onClick={() => navigate(-1)}>
+          Volver
+        </Button>
       </div>
 
       {loading && <p>Cargando...</p>}
 
-      {error && (
-        <ErrorMessage message={error}>
-        </ErrorMessage>
-      )}
+      <ErrorMessage message={error} />
 
       {data && data.items.length === 0 && (
         <p style={{ color: "var(--muted-text)" }}>
@@ -113,7 +113,9 @@ export function PublicLibrariesPage() {
                     checked={selectedLibraryId === library.id}
                     onChange={() => setSelectedLibraryId(library.id)}
                   />
-                  {library.name}
+                  <Link to={`/libraries/${library.id}`}>
+                    {library.name}
+                  </Link>
                 </span>
 
                 <small style={{ color: "var(--muted-text)" }}>

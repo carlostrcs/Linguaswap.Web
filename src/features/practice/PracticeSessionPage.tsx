@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getNextPracticeWord,
   submitAttempt,
@@ -12,6 +12,7 @@ import { TextInput } from "../../components/TextInput";
 import { Button } from "../../components/Button";
 
 export function PracticeSessionPage() {
+  const navigate = useNavigate();
   const { sessionId } = useParams<{ sessionId: string }>();
 
   const [currentWord, setCurrentWord] = useState<GetNextPracticeWordResponse | null>(null);
@@ -89,17 +90,14 @@ export function PracticeSessionPage() {
           </p>
         </div>
 
-        <Link className="button" to="/">
+        <Button type="button" onClick={() => navigate(-1)}>
           Volver
-        </Link>
+        </Button>
       </div>
 
       {loadingWord && <p>Cargando palabra...</p>}
 
-      {error && (
-        <ErrorMessage message={error}>
-        </ErrorMessage>
-      )}
+      <ErrorMessage message={error} />
 
       {!loadingWord && currentWord && (
         <>

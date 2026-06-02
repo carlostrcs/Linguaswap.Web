@@ -58,10 +58,7 @@ export function RegisterPage() {
           />
         </div>
 
-        {error && (
-                  <ErrorMessage message={error}>
-                  </ErrorMessage>
-        )}
+        <ErrorMessage message={error} />
 
         <Button
           type="submit"
