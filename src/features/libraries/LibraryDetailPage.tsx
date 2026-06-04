@@ -5,7 +5,7 @@ import { useEffect, useState, type SubmitEvent } from "react";
 import { getLibraryItems, type GetLibraryItemsItem } from "../../api/libraries";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { TextInput } from "../../components/TextInput";
-import { createVocabItem } from "../../api/vocab";
+import { createVocabItem, deleteTerm, deleteVocabItem, updateTerm } from "../../api/vocab";
 
 export function LibraryDetailPage () {
     const navigate = useNavigate();
@@ -19,8 +19,13 @@ export function LibraryDetailPage () {
     const [termsForm, setTermsForm] = useState([
         { id: crypto.randomUUID(), languageCode: "", text: "" },
         { id: crypto.randomUUID(), languageCode: "", text: "" }
-    ])
-
+    ]);
+    const [deleteVocabItemError, setDeleteVocabItemError] = useState<{vocabItemId: string; message: string} | null>(null);
+    const [deleteTermError, setDeleteTermError] = useState<{termId: string; message: string} | null>(null);
+    const [updateTermError, setUpdateTermError] = useState<{termId: string; message: string;} | null>(null);
+    const [editingTermId, setEditingTermId] = useState<string | null>(null);
+    const [editingLanguageCode, setEditingLanguageCode] = useState("");
+    const [editingText, setEditingText] = useState("");
 
     useEffect(()=>{
         loadLibraryItems();
@@ -80,6 +85,81 @@ export function LibraryDetailPage () {
         );
     }
 
+    async function handleDeleteVocabItem(vocabItemId: string) {
+        const ok = window.confirm("¿Seguro que quieres borrar este item?");
+        if(!ok) return;
+
+        setDeleteVocabItemError(null);
+        setIsSaving(true);
+        clearActionErrors();
+
+        try {
+            await deleteVocabItem(vocabItemId);
+            await loadLibraryItems();
+        }catch (e) {
+            setDeleteVocabItemError(e instanceof Error ? 
+                {vocabItemId:vocabItemId, message: e.message} : 
+                {vocabItemId:vocabItemId, message: String(e)});
+        }finally{
+            setIsSaving(false);
+        }
+        
+    }
+
+    async function handleDeleteTerm(termId: string) {
+        const ok = window.confirm("¿Seguro que quieres borrar este term?");
+        if(!ok) return;
+
+        setDeleteTermError(null);
+        setIsSaving(true);
+        clearActionErrors();
+
+        try {
+            await deleteTerm(termId);
+            await loadLibraryItems();
+        }catch (e) {
+            setDeleteTermError(e instanceof Error ? 
+                {termId:termId, message: e.message} : 
+                {termId:termId, message: String(e)});
+        }finally{
+            setIsSaving(false);
+        }
+        
+    }
+
+    async function handleUpdateTerm(termId: string) {
+        const languageCode = editingLanguageCode.trim().toLowerCase();
+        const text = editingText.trim();
+
+         if (!languageCode || !text) {
+            setUpdateTermError({
+                termId,
+                message: "Completa el idioma y el texto antes de guardar.",
+            });
+            return;
+        }
+
+        clearActionErrors();
+        setIsSaving(true);
+
+        try {
+            await updateTerm(termId, languageCode, text);
+            await loadLibraryItems();
+
+            setEditingTermId(null);
+            setEditingLanguageCode("");
+            setEditingText("");
+        }catch (e) {
+            setUpdateTermError({
+                termId,
+                message: e instanceof Error ? e.message : String(e),
+            });
+        }finally{
+            setIsSaving(false);
+        }
+        
+    }
+
     async function handleCreateVocabItem(e: SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -94,7 +174,7 @@ export function LibraryDetailPage () {
         }
 
         setIsSaving(true);
-        setCreateError(null);
+        clearActionErrors();
 
         try{
             const terms = termsForm.map((term) => ({
@@ -104,12 +184,20 @@ export function LibraryDetailPage () {
             await createVocabItem(libraryId, terms);
             await loadLibraryItems();
             setTermsForm([createEmptyTermRow(), createEmptyTermRow()]);
+            setIsCreating(false);
         }catch(e) {
             setCreateError(e instanceof Error ? e.message : String(e))
         }finally{
             setIsSaving(false);
-            setIsCreating(false);
         }
+        
+    }
+
+    function clearActionErrors() {
+        setCreateError(null);
+        setDeleteVocabItemError(null);
+        setDeleteTermError(null);
+        setUpdateTermError(null);
         
     }
 
@@ -136,17 +224,117 @@ export function LibraryDetailPage () {
             {!loading && !error && items.length > 0 && (
                 <ul className="list">
                     {items.map((item) => (
-                    <li key={item.vocabItemId} className="listItem">
-                        <strong>Item</strong>
+                        <li key={item.vocabItemId} className="listItem card">
+                            <div className="row">
+                                <strong>Item</strong>
 
-                        <ul>
-                        {item.terms.map((term) => (
-                            <li key={term.id}>
-                            <strong>{term.languageCode}</strong>: {term.text}
-                            </li>
-                        ))}
-                        </ul>
-                    </li>
+                                <Button type="button" 
+                                    disabled = {isSaving}
+                                    onClick={() => {
+                                        handleDeleteVocabItem(item.vocabItemId);
+                                    }}
+                                >
+                                    Eliminar
+                                </Button>
+                            </div>
+                            
+                            {deleteVocabItemError && deleteVocabItemError.vocabItemId === item.vocabItemId && (
+                                <ErrorMessage message={deleteVocabItemError.message} />
+                            )}
+                            
+                            <ul>
+                                {item.terms.map((term) => (
+                                    <li className="listItem" key={term.id}>
+                                        <div>
+                                            {editingTermId != term.id && (
+                                                <>
+                                                    <strong>{term.languageCode}:</strong> {term.text}
+                                                </>
+                                            )}
+                                            {editingTermId === term.id && (
+                                                <>
+                                                    <label>Código de idioma:</label>
+                                                    <TextInput type="text"
+                                                        value={editingLanguageCode}
+                                                        disabled = {isSaving}
+                                                        placeholder="Código de idioma"
+                                                        onValueChange={(value)=>{
+                                                            setEditingLanguageCode(value);
+                                                        }}
+                                                    >
+                                                    </TextInput>
+                                                    <label>Texto:</label>
+                                                    <TextInput type="text"
+                                                        value={editingText}
+                                                        disabled = {isSaving}
+                                                        placeholder="Texto"
+                                                        onValueChange={(value)=>{
+                                                            setEditingText(value);
+                                                        }}
+                                                    ></TextInput>
+                                                </>
+                                            )}
+
+                                            {editingTermId != term.id && (
+                                                <Button type="button" 
+                                                    disabled = {isSaving}
+                                                    onClick={() => {
+                                                        clearActionErrors();
+                                                        setEditingTermId(term.id);
+                                                        setEditingLanguageCode(term.languageCode);
+                                                        setEditingText(term.text);
+                                                    }}
+                                                >
+                                                    Editar
+                                                </Button>
+                                            )}
+
+                                            {editingTermId === term.id && (
+                                                <Button
+                                                    type="button"
+                                                    variant="primary"
+                                                    disabled={isSaving || !editingLanguageCode.trim() || !editingText.trim()}
+                                                    onClick={() => handleUpdateTerm(term.id)}
+                                                >
+                                                    {isSaving ? "Guardando..." : "Guardar"}
+                                                </Button>
+                                            )}
+
+                                            {editingTermId === term.id && (
+                                                <Button type="button" 
+                                                disabled = {isSaving}
+                                                onClick={() => {
+                                                    setEditingTermId(null);
+                                                    setEditingLanguageCode("");
+                                                    setEditingText("");
+                                                    setUpdateTermError(null);
+                                                    clearActionErrors();
+                                                }}
+                                            >
+                                                Cancelar
+                                            </Button>
+                                            )}
+
+                                            <Button type="button" 
+                                                disabled = {isSaving}
+                                                onClick={() => {handleDeleteTerm(term.id)}}
+                                            >
+                                                Eliminar
+                                            </Button>
+
+                                        </div>
+                                        
+                                        {deleteTermError && deleteTermError.termId === term.id && (
+                                            <ErrorMessage message={deleteTermError.message} />
+                                        )}
+
+                                        {updateTermError && updateTermError.termId === term.id && (
+                                            <ErrorMessage message={updateTermError.message} />
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </li>
                     ))}
                 </ul>
             )}
@@ -154,7 +342,7 @@ export function LibraryDetailPage () {
             <ErrorMessage message={createError} />
 
             {!isCreating && (
-                <Button type="button" onClick={()=>{setIsCreating(true)}} variant="primary">Crear</Button>
+                <Button type="button" onClick={()=>{setIsCreating(true); setCreateError(null); clearActionErrors()}} variant="primary" disabled = {isSaving}>Crear</Button>
             )}
 
             {isCreating && (

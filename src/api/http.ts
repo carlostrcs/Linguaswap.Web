@@ -35,6 +35,37 @@ export async function apiPost<TResponse, TBody>(path: string, body: TBody): Prom
   return (await res.json()) as TResponse;
 }
 
+export async function apiPut<TResponse, TBody>(path: string, body: TBody): Promise<TResponse>{
+
+    const headers = createHeaders();
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+        method: "PUT",
+        headers,
+        body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`PUT ${path} failed: ${res.status} ${res.statusText} ${text}`);
+    }
+
+    return (await res.json()) as TResponse;
+}
+
+export async function apiDelete(path: string): Promise<void>{
+
+    const headers = createHeaders();
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+        method: "DELETE",
+        headers
+    });
+
+    if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`DELETE ${path} failed: ${res.status} ${res.statusText} ${text}`);
+    }
+}
+
 function createHeaders(): HeadersInit{
   const authToken = getToken();
 
