@@ -1,5 +1,17 @@
 import { apiGet, apiPost } from "./http";
 
+export type StartPracticeSessionRequest = {
+  libraryId: string;
+  sourceLanguage: string;
+  targetLanguage: string;
+  direction: number;
+  difficulty: number;
+};
+
+export type StartPracticeSessionResponse = {
+  sessionId: string;
+};
+
 export type GetNextPracticeWordResponse = {
   wordId: string;
   prompt: string;
@@ -29,4 +41,8 @@ export async function submitAttempt(
     `/api/practice/sessions/${sessionId}/attempts`,
     body
   );
+}
+
+export async function startPracticeSession(body: StartPracticeSessionRequest) {
+  return apiPost<StartPracticeSessionResponse, StartPracticeSessionRequest>("/api/practice/sessions", body);
 }

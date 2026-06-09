@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiGet, apiPost } from "../../api/http";
+import { apiGet } from "../../api/http";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import { ErrorMessage } from "../../components/ErrorMessage";
+import { startPracticeSession, type StartPracticeSessionRequest } from "../../api/practice";
 
 type PublicLibrariesResponse = {
   items: { id: string; name: string }[];
 };
 
-type StartPracticeSessionResponse = {
-  sessionId: string;
-};
 
 export function PublicLibrariesPage() {
   const navigate = useNavigate();
@@ -44,19 +42,15 @@ export function PublicLibrariesPage() {
     setStarting(true);
 
     try {
-      const response = await apiPost<StartPracticeSessionResponse, {
-        libraryId: string;
-        sourceLanguage: string;
-        targetLanguage: string;
-        direction: number;
-        difficulty: number;
-      }>("/api/practice/sessions", {
+
+      const body: StartPracticeSessionRequest = {
         libraryId: selectedLibraryId,
         sourceLanguage: "es",
         targetLanguage: "en",
         direction: 1,
-        difficulty: 1,
-      });
+        difficulty: 1
+      }
+      const response = await startPracticeSession(body);
 
       navigate(`/practice/${response.sessionId}`);
     } catch (e) {
