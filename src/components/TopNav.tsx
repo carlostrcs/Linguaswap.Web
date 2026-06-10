@@ -21,6 +21,7 @@ export function TopNav() {
         <Link to="/demo">Demo</Link>
 
         {loggedIn && <Link to="/libraries">Mis libraries</Link>}
+        {loggedIn && <Link to="/progress">Progreso</Link>}
 
         {!loggedIn && <Link to="/login">Login</Link>}
         {!loggedIn && <Link to="/register">Register</Link>}

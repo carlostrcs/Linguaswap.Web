@@ -9,6 +9,7 @@ import { GuestOnlyRoute } from "../routes/GuestOnlyRoute";
 import { PrivateRoute } from "../routes/PrivateRoute";
 import { HomePage } from "../features/home/HomePage";
 import { RootLayout } from "../components/RootLayout";
+import { ProgressDashboardPage } from "../features/progress/ProgressDashboardPage";
 
 export const router = createBrowserRouter([
   {
@@ -54,6 +55,14 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "/progress",
+        element: (
+          <PrivateRoute>
+            <ProgressDashboardPage />
+          </PrivateRoute>
+        ),
+      }
     ],
   },
 ]);
