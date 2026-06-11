@@ -1,73 +1,198 @@
-# React + TypeScript + Vite
+# LinguaSwap Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for **LinguaSwap**, a vocabulary practice app for learning languages.
 
-Currently, two official plugins are available:
+Users can try a public demo without creating an account, or register and create their own private vocabulary libraries. Each library can contain vocabulary items with terms in different languages, and users can practice them through interactive sessions.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+* Home page with app overview
+* Public demo libraries
+* User authentication flow
+* Private user libraries
+* Create, edit and delete vocabulary items
+* Create, edit and delete terms
+* Practice sessions from public or private libraries
+* Progress dashboard with basic statistics
+* Protected private routes
+* Guest-only login/register routes
+* Theme support with multiple themes
+* Reusable UI components
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+* React
+* TypeScript
+* Vite
+* React Router
+* CSS variables
+* JWT authentication
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Project Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```txt
+src/
+  api/
+    auth.ts
+    http.ts
+    libraries.ts
+    practice.ts
+    progress.ts
+    vocab.ts
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+  app/
+    router.tsx
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+  components/
+    AppShell.tsx
+    Button.tsx
+    Card.tsx
+    ErrorMessage.tsx
+    TextInput.tsx
+    TopNav.tsx
+
+  features/
+    auth/
+    home/
+    libraries/
+    practice/
+    progress/
+
+  routes/
+    GuestOnlyRoute.tsx
+    PrivateRoute.tsx
+
+  styles/
+    base.css
+    theme.css
+
+  theme/
+    ThemeProvider.tsx
+    theme.ts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+You need:
+
+* Node.js
+* npm
+* The LinguaSwap backend API running locally
+
+### Installation
+
+```bash
+npm install
 ```
+
+### Environment Variables
+
+Create a `.env` file in the frontend root:
+
+```env
+VITE_API_BASE_URL=https://localhost:7001
+```
+
+Adjust the value depending on the port used by your backend API.
+
+You can also create a `.env.example` file to document the required environment variables:
+
+```env
+VITE_API_BASE_URL=https://localhost:7001
+```
+
+The `.env` file should not be committed. The `.env.example` file can be committed as a template.
+
+### Run the Development Server
+
+```bash
+npm run dev
+```
+
+The app will usually run at:
+
+```txt
+http://localhost:5173
+```
+
+## Available Scripts
+
+```bash
+npm run dev
+npm run build
+npm run preview
+```
+
+## Main Routes
+
+| Route                   | Description            |
+| ----------------------- | ---------------------- |
+| `/`                     | Home page              |
+| `/demo`                 | Public demo libraries  |
+| `/login`                | Login page             |
+| `/register`             | Register page          |
+| `/libraries`            | User private libraries |
+| `/libraries/:libraryId` | Library detail page    |
+| `/practice/:sessionId`  | Practice session       |
+| `/progress`             | Progress dashboard     |
+
+## Authentication
+
+The frontend uses a JWT access token for authenticated requests.
+
+Private routes are protected with `PrivateRoute`. Guest-only pages such as login and register are protected with `GuestOnlyRoute`.
+
+When the user logs out, the token is cleared and the user is redirected to the login page.
+
+## Practice Flow
+
+1. The user selects a public or private library.
+2. The frontend starts a practice session using the backend API.
+3. The app navigates to `/practice/:sessionId`.
+4. The user answers prompts and receives immediate feedback.
+
+## Progress Dashboard
+
+The progress page shows a first version of user statistics:
+
+* Total accuracy
+* Total attempts
+* Practiced words
+* Progress history
+* Stats by language
+* Stats by language pair
+* Top mistakes
+
+## Styling
+
+The app uses plain CSS with CSS variables.
+
+Global styles are split into:
+
+```txt
+src/styles/theme.css
+src/styles/base.css
+```
+
+Themes are applied using a `data-theme` attribute on the document root.
+
+## Related Repositories
+
+* Backend API: `<BACKEND_REPOSITORY_URL>`
+
+## Current Status
+
+This project is currently an MVP. The main user flows are implemented and the app is usable, but there are still planned improvements.
+
+## Planned Improvements
+
+* Better expired token handling
+* Refresh token authentication
+* More complete backend validation
+* Improved progress statistics
+* Internationalization
+* Better responsive design
+* More polished UI states
+* More user-friendly error messages
