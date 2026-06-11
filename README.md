@@ -180,7 +180,7 @@ Themes are applied using a `data-theme` attribute on the document root.
 
 ## Related Repositories
 
-* Backend API: `<BACKEND_REPOSITORY_URL>`
+* Backend API: `https://github.com/carlostrcs/Linguaswap.Api`
 
 ## Current Status
 
