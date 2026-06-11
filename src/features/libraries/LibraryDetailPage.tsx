@@ -351,7 +351,7 @@ export function LibraryDetailPage () {
             <ErrorMessage message={createError} />
 
             {isCreating && (
-                <form onSubmit={handleCreateVocabItem}>
+                <form onSubmit={handleCreateVocabItem} style={{marginTop: "1em"}}>
                     {termsForm.map((term)=>(
                         <div key={term.id} className="row">
                             <label>Código de idioma:</label>
@@ -382,29 +382,30 @@ export function LibraryDetailPage () {
                             </Button>
                         </div>
                     ))}
-
-                    <Button type="submit" 
-                        variant="buttonPrimary"
-                        disabled = {isSaving || termsForm.length < 2 || areEmptyTermRows()}
-                    >
-                        {isSaving ? "Guardando..." : "Guardar"}
-                    </Button>
-                    <Button type="button" 
-                        onClick={()=>{
-                            setIsCreating(false);
-                            setTermsForm([createEmptyTermRow(), createEmptyTermRow()]);
-                            setCreateError(null);
-                        }} 
-                        variant="buttonPrimary"
-                        disabled = {isSaving}>
-                            Cancelar
-                    </Button>
-                    <Button type="button" 
-                        disabled = {isSaving}
-                        onClick={() => {addTermRow()}}
-                    >
-                        Añadir term
-                    </Button>
+                    <div className="row" style={{marginTop: "1em"}}>
+                        <Button type="submit" 
+                            variant="buttonPrimary"
+                            disabled = {isSaving || termsForm.length < 2 || areEmptyTermRows()}
+                        >
+                            {isSaving ? "Guardando..." : "Guardar"}
+                        </Button>
+                        <Button type="button" 
+                            onClick={()=>{
+                                setIsCreating(false);
+                                setTermsForm([createEmptyTermRow(), createEmptyTermRow()]);
+                                setCreateError(null);
+                            }} 
+                            variant="buttonPrimary"
+                            disabled = {isSaving}>
+                                Cancelar
+                        </Button>
+                        <Button type="button" 
+                            disabled = {isSaving}
+                            onClick={() => {addTermRow()}}
+                        >
+                            Añadir term
+                        </Button>
+                    </div>
                     
                 </form>
             )}
