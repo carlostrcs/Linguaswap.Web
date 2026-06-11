@@ -65,7 +65,7 @@ export function LoginPage() {
 
         <Button
           type="submit"
-          variant="primary"
+          variant="buttonPrimary"
           disabled={loading || !email.trim() || !password.trim()}
         >
           {loading ? "Entrando..." : "Entrar"}

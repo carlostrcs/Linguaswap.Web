@@ -1,10 +1,8 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary";
-
 type ButtonProps = {
   children: ReactNode;
-  variant?: ButtonVariant;
+  variant?: string;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function Button({
@@ -13,11 +11,10 @@ export function Button({
   className = "",
   ...props
 }: ButtonProps) {
-  const variantClass = variant === "primary" ? "buttonPrimary" : "";
 
   return (
     <button
-      className={`button ${variantClass} ${className}`.trim()}
+      className={`button ${variant} ${className}`.trim()}
       {...props}
     >
       {children}

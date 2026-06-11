@@ -204,13 +204,17 @@ export function LibraryDetailPage () {
     return(
         <Card>
             <div className="spread" style={{ marginBottom: 16 }}>
-                <div>
-                    <h3 style={{ margin: 0 }}>Detalles de biblioteca</h3>
-                </div>
+                <h3 style={{ margin: 0 }}>Detalles de biblioteca</h3>
 
-                <Button type="button" onClick={() => navigate(-1)}>
-                    Volver
-                </Button>
+                <div className="spread">
+                    {!isCreating && (
+                        <Button type="button" onClick={()=>{setIsCreating(true); setCreateError(null); clearActionErrors()}} variant="buttonPrimary" disabled = {isSaving}>Crear</Button>
+                    )}
+
+                    <Button type="button" onClick={() => navigate(-1)}>
+                        Volver
+                    </Button>
+                </div>
             </div>
 
             {loading && <p>Cargando palabras...</p>}
@@ -222,7 +226,7 @@ export function LibraryDetailPage () {
             )}
 
             {!loading && !error && items.length > 0 && (
-                <ul className="list">
+                <ul className="list" style={{listStyle: "none"}}>
                     {items.map((item) => (
                         <li key={item.vocabItemId} className="listItem card">
                             <div className="row">
@@ -230,6 +234,7 @@ export function LibraryDetailPage () {
 
                                 <Button type="button" 
                                     disabled = {isSaving}
+                                    variant="buttonDanger"
                                     onClick={() => {
                                         handleDeleteVocabItem(item.vocabItemId);
                                     }}
@@ -244,13 +249,16 @@ export function LibraryDetailPage () {
                             
                             <ul>
                                 {item.terms.map((term) => (
-                                    <li className="listItem" key={term.id}>
-                                        <div>
-                                            {editingTermId != term.id && (
-                                                <>
-                                                    <strong>{term.languageCode}:</strong> {term.text}
-                                                </>
-                                            )}
+                                    <li className="listItem" style={{marginTop: "1em"}} key={term.id}>
+                                        <div className="row" style={{flexWrap: "wrap"}}>
+                                            <div>
+                                                {editingTermId != term.id && (
+                                                    <>
+                                                        <strong>{term.languageCode}:</strong> {term.text}
+                                                    </>
+                                                )}
+                                            </div>
+                                            
                                             {editingTermId === term.id && (
                                                 <>
                                                     <label>Código de idioma:</label>
@@ -292,7 +300,7 @@ export function LibraryDetailPage () {
                                             {editingTermId === term.id && (
                                                 <Button
                                                     type="button"
-                                                    variant="primary"
+                                                    variant="buttonPrimary"
                                                     disabled={isSaving || !editingLanguageCode.trim() || !editingText.trim()}
                                                     onClick={() => handleUpdateTerm(term.id)}
                                                 >
@@ -317,6 +325,7 @@ export function LibraryDetailPage () {
 
                                             <Button type="button" 
                                                 disabled = {isSaving}
+                                                variant="buttonDanger"
                                                 onClick={() => {handleDeleteTerm(term.id)}}
                                             >
                                                 Eliminar
@@ -340,10 +349,6 @@ export function LibraryDetailPage () {
             )}
 
             <ErrorMessage message={createError} />
-
-            {!isCreating && (
-                <Button type="button" onClick={()=>{setIsCreating(true); setCreateError(null); clearActionErrors()}} variant="primary" disabled = {isSaving}>Crear</Button>
-            )}
 
             {isCreating && (
                 <form onSubmit={handleCreateVocabItem}>
@@ -370,6 +375,7 @@ export function LibraryDetailPage () {
                             ></TextInput>
                             <Button type="button" 
                                 disabled = {isSaving || termsForm.length <= 2}
+                                variant="buttonDanger"
                                 onClick={() => {removeTermRow(term.id)}}
                             >
                                 Eliminar
@@ -378,7 +384,7 @@ export function LibraryDetailPage () {
                     ))}
 
                     <Button type="submit" 
-                        variant="primary"
+                        variant="buttonPrimary"
                         disabled = {isSaving || termsForm.length < 2 || areEmptyTermRows()}
                     >
                         {isSaving ? "Guardando..." : "Guardar"}
@@ -389,7 +395,7 @@ export function LibraryDetailPage () {
                             setTermsForm([createEmptyTermRow(), createEmptyTermRow()]);
                             setCreateError(null);
                         }} 
-                        variant="primary"
+                        variant="buttonPrimary"
                         disabled = {isSaving}>
                             Cancelar
                     </Button>

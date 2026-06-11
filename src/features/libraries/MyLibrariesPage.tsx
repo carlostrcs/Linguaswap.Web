@@ -93,20 +93,25 @@ export function MyLibrariesPage() {
 
     return (
         <Card>
-            <div className="spread" style={{ marginBottom: 12 }}>
-                <div>
-                    <h3 style={{ margin: 0 }}>Mis bibliotecas</h3>
+            <div className="spread" style={{ marginBottom: 12, flexWrap: "wrap" }}>
+                <h3 style={{ margin: 0 }}>Mis bibliotecas</h3>
+            
+                <div className="spread" style={{ flexWrap: "wrap" }}>
+                    {!isCreating && (
+                        <Button type="button" onClick={()=>{setIsCreating(true)}} variant="buttonPrimary">Crear</Button>
+                    )}
+
+                    <Button
+                        variant="buttonPrimary"
+                        disabled={!canStart}
+                        onClick={startLibraryPractice}
+                        >
+                        {starting ? "Iniciando..." : "Practicar demo"}
+                    </Button>
+                    <Button type="button" onClick={() => navigate(-1)}>
+                        Volver
+                    </Button>
                 </div>
-                <Button
-                    variant="primary"
-                    disabled={!canStart}
-                    onClick={startLibraryPractice}
-                    >
-                    {starting ? "Iniciando..." : "Practicar demo"}
-                </Button>
-                <Button type="button" onClick={() => navigate(-1)}>
-                    Volver
-                </Button>
             </div>
 
             {loading && <p>Cargando...</p>}
@@ -136,13 +141,9 @@ export function MyLibrariesPage() {
             <div>
                 <ErrorMessage message={error} />
             </div>
-
-            {!isCreating && (
-                <Button type="button" onClick={()=>{setIsCreating(true)}} variant="primary">Crear</Button>
-            )}
             
             {isCreating && (
-                <form onSubmit={handleCreateLibrary}>
+                <form className="spread" onSubmit={handleCreateLibrary}>
                     <TextInput type="text"
                         ref={libraryNameInputRef}
                         value={libraryName}
@@ -152,7 +153,7 @@ export function MyLibrariesPage() {
                             setLibraryName(value);
                         }}
                     />
-                    <Button type="submit" variant="primary" 
+                    <Button type="submit" variant="buttonPrimary" 
                         disabled={isSaving || !libraryName.trim()}>
                             {isSaving ? "Guardando..." : "Guardar"}
                     </Button>
@@ -162,7 +163,6 @@ export function MyLibrariesPage() {
                             setLibraryName("");
                             setCreateError(null);
                         }} 
-                        variant="primary"
                         disabled = {isSaving}>
                             Cancelar
                     </Button>

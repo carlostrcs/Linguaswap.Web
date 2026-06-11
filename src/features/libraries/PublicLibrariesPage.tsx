@@ -62,24 +62,25 @@ export function PublicLibrariesPage() {
 
   return (
     <Card>
-      <div className="spread" style={{ marginBottom: 12 }}>
+      <div className="spread" style={{ marginBottom: 12, flexWrap: "wrap" }}>
         <div>
           <h3 style={{ margin: 0 }}>Bibliotecas públicas</h3>
           <p style={{ margin: "6px 0 0", color: "var(--muted-text)" }}>
             Para probar la demo sin registrarte.
           </p>
         </div>
-
-        <Button
-          variant="primary"
-          disabled={!canStart}
-          onClick={startDemoPractice}
-        >
-          {starting ? "Iniciando..." : "Practicar demo"}
-        </Button>
-		<Button type="button" onClick={() => navigate(-1)}>
-          Volver
-        </Button>
+        <div className="spread" style={{ flexWrap: "wrap" }}>
+          <Button
+            variant="buttonPrimary"
+            disabled={!canStart}
+            onClick={startDemoPractice}
+          >
+            {starting ? "Iniciando..." : "Practicar demo"}
+          </Button>
+          <Button type="button" onClick={() => navigate(-1)}>
+            Volver
+          </Button>
+        </div>
       </div>
 
       {loading && <p>Cargando...</p>}

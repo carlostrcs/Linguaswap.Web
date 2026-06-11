@@ -45,6 +45,12 @@ code {
   padding: 16px;
 }
 
+.mainContainer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
 .card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -102,6 +108,17 @@ code {
   border: none;
   background: var(--primary);
   color: var(--primary-text);
+}
+
+.buttonDanger {
+  border: none;
+  background: var(--danger);
+  color: var(--primary-text);
+}
+
+.buttonDanger:hover:not(:disabled) {
+  background: var(--danger-hover);
+  text-decoration: none;
 }
 
 .buttonPrimary:hover:not(:disabled) {

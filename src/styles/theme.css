@@ -11,7 +11,8 @@
   --primary-hover: #1d4ed8;
   --primary-text: #ffffff;
 
-  --danger: #dc2626;
+  --danger: #ed3e3e;
+  --danger-hover: #ff5770;
   --danger-bg: #fef2f2;
 
   --success: #16a34a;
@@ -36,7 +37,7 @@ html[data-theme="dark"] {
   --primary-hover: #93c5fd;
   --primary-text: #0b1220;
 
-  --danger: #f87171;
+  --danger: #ed3e3e;
   --danger-bg: #2a1218;
 
   --success: #4ade80;

@@ -5,7 +5,7 @@ import { router } from "./app/router";
 export default function App() {
   return (
     <ThemeProvider>
-      <div className="container">
+      <div className="mainContainer">
         <RouterProvider router={router} />
       </div>
     </ThemeProvider>

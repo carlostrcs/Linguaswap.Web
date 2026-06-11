@@ -124,7 +124,7 @@ export function PracticeSessionPage() {
 
               {!feedback && (
                 <Button
-                  variant="primary"
+                  variant="buttonPrimary"
                   type="submit"
                   disabled={submitting || !answer.trim()}
                 >
@@ -149,7 +149,7 @@ export function PracticeSessionPage() {
 
                   <Button
                     type="submit"
-                    variant="primary"
+                    variant="buttonPrimary"
                     style={{ marginTop: 12 }}
                     onClick={loadNextWord}
                   >

@@ -28,7 +28,7 @@ export function HomePage() {
 
         <div className="row">
           <Link to="/demo">
-            <Button type="button" variant="primary">
+            <Button type="button" variant="buttonPrimary">
               Probar demo
             </Button>
           </Link>
