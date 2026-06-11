@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./Button";
 import { clearToken, isAuthenticated } from "../features/auth/auth";
+import { ThemeSelector } from "./ThemeSelector";
 
 export function TopNav() {
   const navigate = useNavigate();
@@ -25,6 +26,8 @@ export function TopNav() {
 
         {!loggedIn && <Link to="/login">Login</Link>}
         {!loggedIn && <Link to="/register">Register</Link>}
+
+        <ThemeSelector/>
 
         {loggedIn && (
           <Button type="button" onClick={handleLogout}>

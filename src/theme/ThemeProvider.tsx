@@ -4,7 +4,7 @@ import { type Theme, ThemeContext, THEME_STORAGE_KEY, applyTheme, isTheme } from
 function getInitialTheme(): Theme {
   const saved = localStorage.getItem(THEME_STORAGE_KEY);
   if (isTheme(saved)) return saved;
-  return "light";
+  return "Light";
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-export const THEMES = ["light", "dark", "marine", "forest"] as const;
+export const THEMES = ["Light", "Dark", "Marine", "Forest"] as const;
 export type Theme = (typeof THEMES)[number];
 
 export type ThemeContextValue = {
