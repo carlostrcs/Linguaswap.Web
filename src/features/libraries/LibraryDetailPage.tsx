@@ -324,7 +324,7 @@ export function LibraryDetailPage () {
                                             )}
 
                                             <Button type="button" 
-                                                disabled = {isSaving}
+                                                disabled = {item.terms.length <= 2 || isSaving}
                                                 variant="buttonDanger"
                                                 onClick={() => {handleDeleteTerm(term.id)}}
                                             >
