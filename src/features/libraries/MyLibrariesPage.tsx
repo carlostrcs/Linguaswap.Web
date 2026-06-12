@@ -106,7 +106,7 @@ export function MyLibrariesPage() {
                         disabled={!canStart}
                         onClick={startLibraryPractice}
                         >
-                        {starting ? "Iniciando..." : "Practicar demo"}
+                        {starting ? "Iniciando..." : "Practicar biblioteca"}
                     </Button>
                     <Button type="button" onClick={() => navigate(-1)}>
                         Volver
