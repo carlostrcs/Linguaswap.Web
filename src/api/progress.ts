@@ -6,10 +6,11 @@ export type GetProgressSummaryRequest = {
 }
 
 export type GetProgressSummaryResult = {
-    totalAttempts: number,
-    correctAttempts: number,
-    accuracy: number,
-    distinctWords: number
+    totalAttempts: number;
+    correctAttempts: number;
+    incorrectAttempts: number;
+    accuracy: number;
+    distinctWords: number;
 }
 
 export type GetProgressHistoryRequest = {
@@ -20,8 +21,10 @@ export type GetProgressHistoryRequest = {
 
 export type GetProgressHistoryResult = {
     day: string;
-    attempts: number;
-    correct: number;
+    totalAttempts: number;
+    correctAttempts: number;
+    incorrectAttempts: number;
+    accuracy: number;
 }
 
 export type GetProgressByLanguageResult = {
@@ -29,6 +32,7 @@ export type GetProgressByLanguageResult = {
     distinctWords: number;
     totalAttempts: number;
     correctAttempts: number;
+    incorrectAttempts: number;
     accuracy: number;
 }
 
@@ -38,6 +42,7 @@ export type GetProgressByPairResult = {
     distinctWords: number;
     totalAttempts: number;
     correctAttempts: number;
+    incorrectAttempts: number;
     accuracy: number;
 }
 
@@ -49,8 +54,11 @@ export type GetTopMistakesRequest = {
 
 export type GetTopMistakesResult = {
     vocabItemId: string;
-    correct: number;
-    wrong: number;
+    sourceText: string;
+    targetText: string;
+    totalAttempts: number;
+    correctAttempts: number;
+    incorrectAttempts: number;
     accuracy: number;
 }
 

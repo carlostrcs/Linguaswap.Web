@@ -92,6 +92,16 @@ export function ProgressDashboardPage() {
                 </div>
 
                 <div>
+                  <strong>Intentos correctos</strong>
+                  <p>{summary.correctAttempts}</p>
+                </div>
+
+                <div>
+                  <strong>Intentos incorrectos</strong>
+                  <p>{summary.incorrectAttempts}</p>
+                </div>
+
+                <div>
                   <strong>Palabras practicadas</strong>
                   <p>{summary.distinctWords}</p>
                 </div>
@@ -111,7 +121,9 @@ export function ProgressDashboardPage() {
                       <p className="mutedText">
                         {item.totalAttempts} intentos ·{" "}
                         {formatAccuracy(item.accuracy)} precisión ·{" "}
-                        {item.distinctWords} palabras
+                        {item.distinctWords} palabras ·{" "}
+                        {item.correctAttempts} correctos ·{" "}
+                        {item.incorrectAttempts} incorrectos
                       </p>
                     </li>
                   ))}
@@ -137,7 +149,9 @@ export function ProgressDashboardPage() {
                       <p className="mutedText">
                         {item.totalAttempts} intentos ·{" "}
                         {formatAccuracy(item.accuracy)} precisión ·{" "}
-                        {item.distinctWords} palabras
+                        {item.distinctWords} palabras ·{" "}
+                        {item.correctAttempts} correctos ·{" "}
+                        {item.incorrectAttempts} incorrectos
                       </p>
                     </li>
                   ))}
@@ -159,7 +173,7 @@ export function ProgressDashboardPage() {
                     >
                       <strong>{item.day}</strong>
                       <p className="mutedText">
-                        {item.attempts} intentos · {item.correct} correctos
+                        {item.totalAttempts} intentos · {item.correctAttempts} correctos · {item.incorrectAttempts} incorrectos
                       </p>
                     </li>
                   ))}
@@ -176,9 +190,9 @@ export function ProgressDashboardPage() {
                 <ul className="list">
                   {topMistakes.map((item) => (
                     <li key={item.vocabItemId} className="listItem">
-                      <strong>{item.vocabItemId}</strong>
+                      <strong>{item.sourceText}</strong>
                       <p className="mutedText">
-                        {item.wrong} errores · {item.correct} correctos ·{" "}
+                        {item.incorrectAttempts} errores · {item.correctAttempts} correctos ·{" "}
                         {formatAccuracy(item.accuracy)} precisión
                       </p>
                     </li>
