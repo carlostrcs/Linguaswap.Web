@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./Button";
-import { clearToken, isAuthenticated } from "../features/auth/auth";
+
 import { ThemeSelector } from "./ThemeSelector";
+import { clearToken, isAuthenticated } from "../auth/auth";
 
 export function TopNav() {
   const navigate = useNavigate();

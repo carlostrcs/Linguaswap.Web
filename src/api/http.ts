@@ -1,4 +1,4 @@
-import { getToken } from "../auth/auth";
+import { getValidToken } from "../auth/auth";
 
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -71,7 +71,7 @@ export async function apiDelete(path: string): Promise<void>{
 }
 
 function createHeaders(): HeadersInit{
-  const authToken = getToken();
+  const authToken = getValidToken();
 
   let headers: HeadersInit = {
   "Content-Type": "application/json",
