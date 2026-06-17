@@ -72,6 +72,14 @@ code {
   align-items: center;
 }
 
+.toolbarActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
 .stack {
   display: grid;
   gap: 12px;
