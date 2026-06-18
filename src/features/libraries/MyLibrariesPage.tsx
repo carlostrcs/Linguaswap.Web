@@ -72,57 +72,57 @@ export function MyLibrariesPage() {
     }
   }, [isCreating]);
 
-    useEffect(() => {
-        if (!selectedLibraryId) {
-            setPracticeOptions(null);
-            setSourceLanguage("");
-            setTargetLanguage("");
-            setPracticeOptionsError(null);
-            return;
-        }
+  useEffect(() => {
+      if (!selectedLibraryId) {
+          setPracticeOptions(null);
+          setSourceLanguage("");
+          setTargetLanguage("");
+          setPracticeOptionsError(null);
+          return;
+      }
 
-        let cancelled = false;
+      let cancelled = false;
 
-        async function loadPracticeOptions() {
-            setPracticeOptionsLoading(true);
-            setPracticeOptionsError(null);
+      async function loadPracticeOptions() {
+          setPracticeOptionsLoading(true);
+          setPracticeOptionsError(null);
 
-            try {
-            const response = await getLibraryPracticeOptions(selectedLibraryId);
+          try {
+          const response = await getLibraryPracticeOptions(selectedLibraryId!);
 
-            if (cancelled) return;
+          if (cancelled) return;
 
-            setPracticeOptions(response);
+          setPracticeOptions(response);
 
-            const firstPair = response.pairs[0];
+          const firstPair = response.pairs[0];
 
-            if (firstPair) {
-                setSourceLanguage(firstPair.sourceLanguage);
-                setTargetLanguage(firstPair.targetLanguage);
-            } else {
-                setSourceLanguage("");
-                setTargetLanguage("");
-            }
-            } catch (e) {
-            if (cancelled) return;
+          if (firstPair) {
+              setSourceLanguage(firstPair.sourceLanguage);
+              setTargetLanguage(firstPair.targetLanguage);
+          } else {
+              setSourceLanguage("");
+              setTargetLanguage("");
+          }
+          } catch (e) {
+          if (cancelled) return;
 
-            setPracticeOptionsError(e instanceof Error ? e.message : String(e));
-            setPracticeOptions(null);
-            setSourceLanguage("");
-            setTargetLanguage("");
-            } finally {
-            if (!cancelled) {
-                setPracticeOptionsLoading(false);
-            }
-            }
-        }
+          setPracticeOptionsError(e instanceof Error ? e.message : String(e));
+          setPracticeOptions(null);
+          setSourceLanguage("");
+          setTargetLanguage("");
+          } finally {
+          if (!cancelled) {
+              setPracticeOptionsLoading(false);
+          }
+          }
+      }
 
-        loadPracticeOptions();
+      loadPracticeOptions();
 
-        return () => {
-            cancelled = true;
-        };
-    }, [selectedLibraryId]);
+      return () => {
+          cancelled = true;
+      };
+  }, [selectedLibraryId]);
 
   async function loadLibraries() {
     setLoading(true);

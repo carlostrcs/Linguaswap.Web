@@ -7,6 +7,10 @@ export type LibraryListItem = {
 
 export type GetLibrariesResponse = LibraryListItem[];
 
+export type PublicLibrariesResponse = {
+  items: { id: string; name: string }[];
+};
+
 export type CreateLibraryResult = {
   libraryId: string;
 };
@@ -47,6 +51,10 @@ export async function getMyLibraries() {
     `/api/libraries`
   );
 };
+
+export async function getPublicLibraries() {
+  return apiGet<PublicLibrariesResponse>(`/api/libraries/public`);
+}
 
 export async function createLibrary(name: string) {
   return apiPost<CreateLibraryResult, CreateLibraryRequest>(

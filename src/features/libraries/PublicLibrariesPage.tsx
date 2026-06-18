@@ -1,14 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { apiGet } from "../../api/http";
 import { Card } from "../../components/Card";
 import { Button } from "../../components/Button";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { startPracticeSession, type StartPracticeSessionRequest } from "../../api/practice";
-
-type PublicLibrariesResponse = {
-  items: { id: string; name: string }[];
-};
+import { getLibraryPracticeOptions, getPublicLibraries, type GetLibraryPracticeOptionsResult, type PublicLibrariesResponse } from "../../api/libraries";
+import { PracticeLanguageSelector } from "../../components/PracticeLanguageSelector";
 
 
 export function PublicLibrariesPage() {
@@ -20,16 +17,85 @@ export function PublicLibrariesPage() {
 
   const [selectedLibraryId, setSelectedLibraryId] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
+    const [practiceOptionsError, setPracticeOptionsError] = useState<string | null>(null);
+
+  const [practiceOptionsLoading, setPracticeOptionsLoading] = useState(false);
+  const [sourceLanguage, setSourceLanguage] = useState("");
+  const [targetLanguage, setTargetLanguage] = useState("");
+  const [practiceOptions, setPracticeOptions] =
+      useState<GetLibraryPracticeOptionsResult | null>(null);
 
   useEffect(() => {
-    apiGet<PublicLibrariesResponse>("/api/libraries/public")
-      .then((response) => {
-        setData(response);
-        setSelectedLibraryId(response.items[0]?.id ?? null);
-      })
-      .catch((e) => setError(e instanceof Error ? e.message : String(e)))
-      .finally(() => setLoading(false));
+    loadPublicLibraries();
   }, []);
+
+  useEffect(() => {
+    if (!selectedLibraryId) {
+          setPracticeOptions(null);
+          setSourceLanguage("");
+          setTargetLanguage("");
+          setPracticeOptionsError(null);
+          return;
+    }
+
+    let cancelled = false;
+
+    async function loadPracticeOptions() {
+              setPracticeOptionsLoading(true);
+              setPracticeOptionsError(null);
+    
+              try {
+              const response = await getLibraryPracticeOptions(selectedLibraryId!);
+    
+              if (cancelled) return;
+    
+              setPracticeOptions(response);
+    
+              const firstPair = response.pairs[0];
+    
+              if (firstPair) {
+                  setSourceLanguage(firstPair.sourceLanguage);
+                  setTargetLanguage(firstPair.targetLanguage);
+              } else {
+                  setSourceLanguage("");
+                  setTargetLanguage("");
+              }
+              } catch (e) {
+              if (cancelled) return;
+    
+              setPracticeOptionsError(e instanceof Error ? e.message : String(e));
+              setPracticeOptions(null);
+              setSourceLanguage("");
+              setTargetLanguage("");
+              } finally {
+              if (!cancelled) {
+                  setPracticeOptionsLoading(false);
+              }
+              }
+          }
+    
+          loadPracticeOptions();
+    
+          return () => {
+              cancelled = true;
+          };
+
+  }, [selectedLibraryId]);
+
+  async function loadPublicLibraries() {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await getPublicLibraries();
+      setData(response);
+      setSelectedLibraryId(response.items[0]?.id ?? null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const canStart = useMemo(() => {
     return !loading && !starting && !!selectedLibraryId;
@@ -69,7 +135,32 @@ export function PublicLibrariesPage() {
             Para probar la demo sin registrarte.
           </p>
         </div>
-        <div className="spread" style={{ flexWrap: "wrap" }}>
+        <div className="toolbarActions">
+          {practiceOptionsLoading && !practiceOptions && (
+            <p className="mutedText">
+                Cargando idiomas disponibles...
+            </p>
+          )}
+          
+          {practiceOptions && practiceOptions.pairs.length > 0 && (
+            <PracticeLanguageSelector
+            pairs={practiceOptions.pairs}
+            sourceLanguage={sourceLanguage}
+            targetLanguage={targetLanguage}
+            disabled={starting}
+            onSourceLanguageChange={(nextSourceLanguage, firstCompatibleTarget) => {
+                setSourceLanguage(nextSourceLanguage);
+                setTargetLanguage(firstCompatibleTarget);
+            }}
+            onTargetLanguageChange={setTargetLanguage}
+            />
+          )}
+
+          {practiceOptions && practiceOptions.pairs.length === 0 && (
+            <p style={{ color: "var(--muted-text)" }}>
+            Esta biblioteca no tiene vocabulario compatible para iniciar una práctica.
+            </p>
+          )}
           <Button
             variant="buttonPrimary"
             disabled={!canStart}
@@ -85,6 +176,7 @@ export function PublicLibrariesPage() {
 
       {loading && <p>Cargando...</p>}
 
+      <ErrorMessage message={practiceOptionsError} />
       <ErrorMessage message={error} />
 
       {data && data.items.length === 0 && (
@@ -94,7 +186,7 @@ export function PublicLibrariesPage() {
       )}
 
       {data && data.items.length > 0 && (
-        <ul style={{ paddingLeft: 18, margin: 0 }}>
+        <ul>
           {data.items.map((library) => (
             <li key={library.id} style={{ marginBottom: 8 }}>
               <label
@@ -112,10 +204,6 @@ export function PublicLibrariesPage() {
                     {library.name}
                   </Link>
                 </span>
-
-                <small style={{ color: "var(--muted-text)" }}>
-                  {library.id}
-                </small>
               </label>
             </li>
           ))}
